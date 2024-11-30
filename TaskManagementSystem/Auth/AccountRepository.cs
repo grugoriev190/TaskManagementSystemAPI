@@ -4,29 +4,40 @@ namespace TaskManagementSystem.Auth
 {
     public class AccountRepository
     {
-        private static IDictionary<string, User> Accounts = new Dictionary<string, User>();
+		private readonly AppDbContext dbContext;
 
-        public void Add(User account)
+		public AccountRepository(AppDbContext dbContext)
+		{
+			this.dbContext = dbContext;
+		}
+		public void Add(User account)
         {
-            Accounts[account.Email] = account;
-        }
+			dbContext.Users.Add(account);
+			dbContext.SaveChanges();
+		}
         public void Update(User account)
         {
-            account.UpdatedAt = DateTime.UtcNow;
-            Accounts[account.Email] = account;
-        }
+			account.UpdatedAt = DateTime.UtcNow;
+			dbContext.Users.Update(account);
+			dbContext.SaveChanges();
+		}
 
-        public User? GetByUserName(string email)
+        public User? GetByUserName(string userName)
         {
-            return Accounts.TryGetValue(email, out var account) ? account : null;
-        }
+			return dbContext.Users.FirstOrDefault(u => u.UserName == userName);
+		}
 
-        public User? GetByUserNameOrEmail(string identifier)
+		public User? GetByEmail(string email)
+		{
+			return dbContext.Users.FirstOrDefault(u => u.Email == email);
+		}
+
+		public User? GetByUserNameOrEmail(string identifier)
         {
-            return Accounts.Values.FirstOrDefault(account =>
-                account.UserName.Equals(identifier, StringComparison.OrdinalIgnoreCase) ||
-                account.Email.Equals(identifier, StringComparison.OrdinalIgnoreCase));
-        }
+			var identifierLower = identifier.ToLower();
+			return dbContext.Users.FirstOrDefault(u =>
+				u.UserName.ToLower() == identifierLower || u.Email.ToLower() == identifierLower);
+		}
 
     }
 

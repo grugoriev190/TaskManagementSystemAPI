@@ -5,48 +5,54 @@ namespace TaskManagementSystem.Task
 {
 	public class TaskRepository
 	{
-		private static IDictionary<Guid, List<Models.Task>> UserTasks = new Dictionary<Guid, List<Models.Task>>();
+		private readonly AppDbContext dbContext;
 
+		public TaskRepository(AppDbContext dbContext)
+		{
+			this.dbContext = dbContext;
+		}
 		public void AddTask(Guid userId, Models.Task task)
 		{
-			if (!UserTasks.ContainsKey(userId))
-			{
-				UserTasks[userId] = new List<Models.Task>();
-			}
-			UserTasks[userId].Add(task);
+			dbContext.Tasks.Add(task);
+			dbContext.SaveChanges();
 		}
 
 		public IEnumerable<Models.Task> GetTasksByUser(Guid userId)
 		{
-			return UserTasks.TryGetValue(userId, out var tasks) ? tasks : Enumerable.Empty<Models.Task>();
+			return dbContext.Tasks.Where(t => t.UserId == userId).ToList();
 		}
 
-		public Models.Task? GetTaskById(Guid userId, Guid taskId)
+		public Models.Task? GetTaskById(Guid taskId)
 		{
-			return UserTasks.TryGetValue(userId, out var tasks)
-				? tasks.FirstOrDefault(t => t.Id == taskId)
-				: null;
+			return dbContext.Tasks.FirstOrDefault(t => t.Id == taskId);
 		}
 
 		public void UpdateTask(Guid userId, Models.Task task)
 		{
-			var existingTask = GetTaskById(userId, task.Id);
-			if (existingTask != null)
+			dbContext.Tasks.Update(task);
+			dbContext.SaveChanges();
+		}
+
+		public void DeleteTask(Guid taskId)
+		{
+			var task = GetTaskById(taskId);
+			if (task != null)
 			{
-				task.UpdatedAt = DateTime.UtcNow;
-				UserTasks[userId].Remove(existingTask);
-				UserTasks[userId].Add(task);
+				dbContext.Tasks.Remove(task);
+				dbContext.SaveChanges();
 			}
 		}
 
-		public void DeleteTask(Guid userId, Guid taskId)
+		public IEnumerable<Models.Task> FilterTasks(Guid userId, Models.TaskStatus? status, DateTime? dueDate, TaskPriority? priority)
 		{
-			var task = GetTaskById(userId, taskId);
-			if (task != null)
-			{
-				UserTasks[userId].Remove(task);
-			}
+			return dbContext.Tasks
+			.Where(t => t.UserId == userId &&
+						(!status.HasValue || t.Status == status) &&
+						(!dueDate.HasValue || t.DueDate == dueDate) &&
+						(!priority.HasValue || t.Priority == priority))
+			.ToList();
 		}
+
 
 	}
 }

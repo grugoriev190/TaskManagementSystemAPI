@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.RegularExpressions;
 using TaskManagementSystem.Models;
 
 namespace TaskManagementSystem.Auth
 {
-    public class AccountService(AccountRepository accountRepository, JwtService jwtService)
+    public class AccountService
     {
-        public void Register(string userName, string email, string password)
+		private readonly AccountRepository accountRepository;
+		private readonly JwtService jwtService;
+
+		public AccountService(AccountRepository accountRepository, JwtService jwtService)
+		{
+			this.accountRepository = accountRepository;
+			this.jwtService = jwtService;
+		}
+		public void Register(string userName, string email, string password)
         {
 
             if (accountRepository.GetByUserName(email) != null)
@@ -13,17 +22,22 @@ namespace TaskManagementSystem.Auth
                 throw new Exception("Email already in use.");
             }
 
-            if (password.Length < 8 ||
-                !password.Any(char.IsUpper) ||
-                !password.Any(char.IsDigit) ||
-                !password.Any(c => !char.IsLetterOrDigit(c)))
-            {
-                throw new Exception("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.");
-            }
+			if (accountRepository.GetByUserName(userName) != null)
+			{
+				throw new Exception("Username already in use.");
+			}
+
+			if (password.Length < 8 ||
+			   !password.Any(char.IsUpper) ||
+			   !password.Any(char.IsDigit) ||
+			   !password.Any(c => !char.IsLetterOrDigit(c)))
+			{
+				throw new Exception("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.");
+			}
 
 
 
-            var account = new User
+			var account = new User
             {
                 UserName = userName,
                 Email = email,

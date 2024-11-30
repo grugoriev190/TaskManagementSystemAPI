@@ -32,12 +32,12 @@ namespace TaskManagementSystem.Task
 
 		public Models.Task? GetTaskById(Guid userId, Guid taskId)
 		{
-			return taskRepository.GetTaskById(userId, taskId);
+			return taskRepository.GetTaskById(taskId);
 		}
 
 		public void UpdateTask(Guid userId, Models.Task updatedTask)
 		{
-			var existingTask = taskRepository.GetTaskById(userId, updatedTask.Id);
+			var existingTask = taskRepository.GetTaskById(updatedTask.Id);
 			if (existingTask == null)
 			{
 				throw new Exception("Task not found.");
@@ -60,7 +60,7 @@ namespace TaskManagementSystem.Task
 
 		public void DeleteTask(Guid userId, Guid taskId)
 		{
-			var task = taskRepository.GetTaskById(userId, taskId);
+			var task = taskRepository.GetTaskById(taskId);
 			if (task == null)
 			{
 				throw new Exception("Task not found.");
@@ -71,7 +71,12 @@ namespace TaskManagementSystem.Task
 				throw new Exception("Unauthorized to delete this task.");
 			}
 
-			taskRepository.DeleteTask(userId, taskId);
+			taskRepository.DeleteTask(taskId);
+		}
+
+		public IEnumerable<Models.Task> FilterTasks(Guid userId, Models.TaskStatus? status, DateTime? dueDate, TaskPriority? priority)
+		{
+			return taskRepository.FilterTasks(userId, status, dueDate, priority);
 		}
 
 	}

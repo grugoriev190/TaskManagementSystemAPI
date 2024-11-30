@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem;
 using TaskManagementSystem.Auth;
 using TaskManagementSystem.Task;
 
@@ -13,6 +15,10 @@ builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddScoped<TaskRepository>(); 
 builder.Services.AddScoped<TaskService>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Add services to the container.
 
 builder.Services.AddControllers();
