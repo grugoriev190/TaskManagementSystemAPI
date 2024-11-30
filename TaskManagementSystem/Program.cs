@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TaskManagementSystem.Auth;
+using TaskManagementSystem.Task;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.Configure<AuthSettings>(
 	builder.Configuration.GetSection("AuthSettings"));
 builder.Services.AddAuth(builder.Configuration);
+
+builder.Services.AddScoped<TaskRepository>(); 
+builder.Services.AddScoped<TaskService>();
 // Add services to the container.
 
 builder.Services.AddControllers();

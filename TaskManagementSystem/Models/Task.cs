@@ -1,6 +1,6 @@
 ﻿namespace TaskManagementSystem.Models
 {
-	public class TaskItem
+	public class Task
 	{
 		public Guid Id { get; set; } = Guid.NewGuid();
 		public string Title { get; set; } = null!;
