@@ -38,7 +38,7 @@ namespace TaskManagementSystem.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetTasks()
+		public IActionResult GetTasks([FromQuery] Models.TaskStatus? status, [FromQuery] DateTime? dueDate, [FromQuery] TaskPriority? priority, [FromQuery] string sortBy = "DueDate", [FromQuery] string sortOrder = "asc")
 		{
 			var userId = User.FindFirst("id")?.Value;
 			if (userId == null)
@@ -47,8 +47,41 @@ namespace TaskManagementSystem.Controllers
 			}
 
 			var tasks = taskService.GetUserTasks(Guid.Parse(userId));
+
+			// Filtering
+			if (status.HasValue)
+			{
+				tasks = tasks.Where(t => t.Status == status.Value).ToList();
+			}
+
+			if (dueDate.HasValue)
+			{
+				tasks = tasks.Where(t => t.DueDate.HasValue && t.DueDate.Value.Date == dueDate.Value.Date).ToList();
+			}
+
+
+			if (priority.HasValue)
+			{
+				tasks = tasks.Where(t => t.Priority == priority.Value).ToList();
+			}
+
+			// Sorting
+			if (sortBy.Equals("DueDate", StringComparison.OrdinalIgnoreCase))
+			{
+				tasks = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
+					? tasks.OrderBy(t => t.DueDate).ToList()
+					: tasks.OrderByDescending(t => t.DueDate).ToList();
+			}
+			else if (sortBy.Equals("Priority", StringComparison.OrdinalIgnoreCase))
+			{
+				tasks = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
+					? tasks.OrderBy(t => t.Priority).ToList()
+					: tasks.OrderByDescending(t => t.Priority).ToList();
+			}
+
 			return Ok(tasks);
 		}
+
 
 		[HttpGet("{taskId}")]
 		public IActionResult GetTaskById(Guid taskId)
