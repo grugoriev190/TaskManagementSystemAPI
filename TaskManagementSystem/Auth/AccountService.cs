@@ -77,5 +77,61 @@ namespace TaskManagementSystem.Auth
                 throw new Exception("Unauthorized");
             }
         }
-    }
+
+		public void DeleteAccount(Guid userId)
+		{
+			Console.WriteLine($"Attempting to delete user with ID: {userId}");
+			accountRepository.Delete(userId);
+			Console.WriteLine($"User deleted successfully: {userId}");
+		}
+
+		public void UpdateAccount(Guid userId, string? newUserName, string? newEmail, string? newPassword)
+		{
+			Console.WriteLine($"Attempting to update user with ID: {userId}");
+			var account = accountRepository.GetByUserNameOrEmail(newEmail ?? newUserName ?? string.Empty);
+
+			if (account == null || account.Id != userId)
+			{
+				account = accountRepository.GetByUserId(userId); // Додати окремий метод для пошуку за userId.
+				if (account == null)
+				{
+					throw new Exception("User not found.");
+				}
+			}
+
+			if (!string.IsNullOrEmpty(newUserName))
+			{
+				if (accountRepository.GetByUserName(newUserName) != null)
+				{
+					throw new Exception("Username already in use.");
+				}
+				account.UserName = newUserName;
+			}
+
+			if (!string.IsNullOrEmpty(newEmail))
+			{
+				if (accountRepository.GetByEmail(newEmail) != null)
+				{
+					throw new Exception("Email already in use.");
+				}
+				account.Email = newEmail;
+			}
+
+			if (!string.IsNullOrEmpty(newPassword))
+			{
+				if (newPassword.Length < 8 ||
+				   !newPassword.Any(char.IsUpper) ||
+				   !newPassword.Any(char.IsDigit) ||
+				   !newPassword.Any(c => !char.IsLetterOrDigit(c)))
+				{
+					throw new Exception("Password must meet security criteria.");
+				}
+				var passHash = new PasswordHasher<User>().HashPassword(account, newPassword);
+				account.PasswordHash = passHash;
+			}
+
+			accountRepository.Update(account);
+			Console.WriteLine($"User updated successfully: {userId}");
+		}
+	}
 }
