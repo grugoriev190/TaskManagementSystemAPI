@@ -302,14 +302,25 @@ You can use tools like Postman or Swagger UI (in development) to interact with t
     "title": "Test Task",
     "description": "This is a test task",
     "dueDate": "2024-12-11T18:00:00Z",
-    "priority": "High"
+    "priority": "Medium"
   }
   ```
   
 - **Responds:** <br>
   `Success (200 OK):`
   ```json
-  
+  {
+    "id": "80e1f0bc-454c-4c9c-9960-2a366a06a864",
+    "title": "Test Task",
+    "description": "This is a test task",
+    "dueDate": "2024-12-11T18:00:00Z",
+    "status": 0,
+    "priority": 1,
+    "createdAt": "2024-12-04T16:30:26.1467036Z",
+    "updatedAt": "2024-12-04T16:30:26.1467039Z",
+    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f",
+    "user": "UserName"
+}
   ```
   `Error (400 Bad Request):`
   ```json
