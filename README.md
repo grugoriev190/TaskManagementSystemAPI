@@ -240,8 +240,7 @@ You can use tools like Postman or Swagger UI (in development) to interact with t
     "priority": 0,
     "createdAt": "2024-12-02T11:33:01.1736865",
     "updatedAt": "2024-12-02T11:33:01.1736866",
-    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f",
-    "user": "UserName"
+    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f"
   }
   ```
   `Error (401 Unauthorized):`
@@ -268,8 +267,7 @@ You can use tools like Postman or Swagger UI (in development) to interact with t
     "priority": 0,
     "createdAt": "2024-12-02T11:33:01.1736865",
     "updatedAt": "2024-12-02T11:33:01.1736866",
-    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f",
-    "user": "UserName"
+    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f"
   }
   ```
   `Error (404 Not Found):`
@@ -318,8 +316,7 @@ You can use tools like Postman or Swagger UI (in development) to interact with t
     "priority": 1,
     "createdAt": "2024-12-04T16:30:26.1467036Z",
     "updatedAt": "2024-12-04T16:30:26.1467039Z",
-    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f",
-    "user": "UserName"
+    "userId": "97d261e2-ef13-4fcb-9752-2ceaa7d4867f"
 }
   ```
   `Error (400 Bad Request):`
