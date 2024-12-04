@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 using TaskManagementSystem.Models;
 
 namespace TaskManagementSystem.Task
@@ -29,6 +30,13 @@ namespace TaskManagementSystem.Task
 
 		public void UpdateTask(Guid userId, Models.Task task)
 		{
+			var existingTask = dbContext.Tasks.Local.FirstOrDefault(t => t.Id == task.Id);
+			if (existingTask != null)
+			{
+				// Якщо є, від'єднуємо її, щоб не було конфлікту
+				dbContext.Entry(existingTask).State = EntityState.Detached;
+			}
+
 			dbContext.Tasks.Update(task);
 			dbContext.SaveChanges();
 		}

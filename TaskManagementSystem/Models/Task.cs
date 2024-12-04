@@ -1,4 +1,6 @@
-﻿namespace TaskManagementSystem.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TaskManagementSystem.Models
 {
 	public class Task
 	{
@@ -11,6 +13,8 @@
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 		public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 		public Guid UserId { get; set; }
+
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public User User { get; set; } = null!;
 	}
 
