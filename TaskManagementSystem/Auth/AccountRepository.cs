@@ -5,7 +5,7 @@ namespace TaskManagementSystem.Auth
     public class AccountRepository
     {
 		private readonly AppDbContext dbContext;
-
+		// Конструктор для ініціалізації dbContext
 		public AccountRepository(AppDbContext dbContext)
 		{
 			this.dbContext = dbContext;
@@ -20,6 +20,7 @@ namespace TaskManagementSystem.Auth
 			var existingAccount = dbContext.Users.FirstOrDefault(u => u.Id == account.Id);
 			if (existingAccount != null)
 			{
+				// Оновлення полів користувача
 				existingAccount.UserName = account.UserName;
 				existingAccount.Email = account.Email;
 				existingAccount.PasswordHash = account.PasswordHash;
@@ -63,6 +64,7 @@ namespace TaskManagementSystem.Auth
 			return dbContext.Users.FirstOrDefault(u => u.Id == userId);
 		}
 
+		// Метод для отримання користувача за ім'ям або email
 		public User? GetByUserNameOrEmail(string identifier)
         {
 			var identifierLower = identifier.ToLower();

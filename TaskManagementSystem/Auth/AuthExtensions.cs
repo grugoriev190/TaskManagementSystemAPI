@@ -9,7 +9,8 @@ namespace TaskManagementSystem.Auth
 {
     public static class AuthExtensions
     {
-        public static IServiceCollection AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
+		// Розширення для налаштування аутентифікації через JWT
+		public static IServiceCollection AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             var authSettings = configuration.GetSection(nameof(AuthSettings)).Get<AuthSettings>();
             serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
@@ -20,8 +21,8 @@ namespace TaskManagementSystem.Auth
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.SecretKey))
-                };
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.SecretKey)) // Ключ для перевірки підпису
+				};
             });
 
             return serviceCollection;

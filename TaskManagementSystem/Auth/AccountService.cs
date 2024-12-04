@@ -16,8 +16,8 @@ namespace TaskManagementSystem.Auth
 		}
 		public void Register(string userName, string email, string password)
         {
-
-            if (accountRepository.GetByUserName(email) != null)
+			// Перевірка, чи не використовується вже email або ім'я користувача
+			if (accountRepository.GetByUserName(email) != null)
             {
                 throw new Exception("Email already in use.");
             }
@@ -27,6 +27,7 @@ namespace TaskManagementSystem.Auth
 				throw new Exception("Username already in use.");
 			}
 
+			// Перевірка пароля
 			if (password.Length < 8 ||
 			   !password.Any(char.IsUpper) ||
 			   !password.Any(char.IsDigit) ||
@@ -36,7 +37,7 @@ namespace TaskManagementSystem.Auth
 			}
 
 
-
+			// Створення нового користувача
 			var account = new User
             {
                 UserName = userName,
@@ -85,14 +86,16 @@ namespace TaskManagementSystem.Auth
 			Console.WriteLine($"User deleted successfully: {userId}");
 		}
 
+		// Метод для оновлення даних користувача
 		public void UpdateAccount(Guid userId, string? newUserName, string? newEmail, string? newPassword)
 		{
 			Console.WriteLine($"Attempting to update user with ID: {userId}");
 			var account = accountRepository.GetByUserNameOrEmail(newEmail ?? newUserName ?? string.Empty);
 
+			// Перевірка та оновлення даних користувача
 			if (account == null || account.Id != userId)
 			{
-				account = accountRepository.GetByUserId(userId); // Додати окремий метод для пошуку за userId.
+				account = accountRepository.GetByUserId(userId);
 				if (account == null)
 				{
 					throw new Exception("User not found.");

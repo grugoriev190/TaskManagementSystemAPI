@@ -9,7 +9,7 @@ namespace TaskManagementSystem.Controllers
 
 	[ApiController]
 	[Route("[controller]")]
-	[Authorize]
+	[Authorize] // Авторизація для доступу до всіх методів цього контролера
 	public class TasksController : Controller
 	{
 		private readonly TaskService taskService;
@@ -22,7 +22,7 @@ namespace TaskManagementSystem.Controllers
 		[HttpPost]
 		public IActionResult CreateTask(TaskRequest request)
 		{
-			var userId = User.FindFirst("id")?.Value;
+			var userId = User.FindFirst("id")?.Value; // Отримуємо ідентифікатор користувача з токену
 			if (userId == null)
 			{
 				return Unauthorized();
@@ -48,7 +48,7 @@ namespace TaskManagementSystem.Controllers
 
 			var tasks = taskService.GetUserTasks(Guid.Parse(userId));
 
-			// Filtering
+			// Фільтрація
 			if (status.HasValue)
 			{
 				tasks = tasks.Where(t => t.Status == status.Value).ToList();
@@ -65,7 +65,7 @@ namespace TaskManagementSystem.Controllers
 				tasks = tasks.Where(t => t.Priority == priority.Value).ToList();
 			}
 
-			// Sorting
+			// Сортування
 			if (sortBy.Equals("DueDate", StringComparison.OrdinalIgnoreCase))
 			{
 				tasks = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
@@ -165,5 +165,12 @@ namespace TaskManagementSystem.Controllers
 				return NotFound(new { message = ex.Message });
 			}
 		}
+
+		private Guid? GetUserIdFromToken()
+		{
+			var userId = User.FindFirst("id")?.Value;
+			return userId != null ? Guid.Parse(userId) : (Guid?)null;
+		}
+
 	}
 }

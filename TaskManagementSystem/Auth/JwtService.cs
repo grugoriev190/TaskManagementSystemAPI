@@ -7,9 +7,11 @@ using System.Text;
 
 namespace TaskManagementSystem.Auth
 {
-    public class JwtService(IOptions<AuthSettings> options)
+	// Сервіс для генерування JWT токенів
+	public class JwtService(IOptions<AuthSettings> options)
     {
-        public string GenerateToken(User account)
+		// Метод для генерації токена на основі даних користувача
+		public string GenerateToken(User account)
         {
             var claims = new List<Claim>
             {
@@ -18,12 +20,12 @@ namespace TaskManagementSystem.Auth
                 new Claim("id", account.Id.ToString()),
             };
             var jwtToken = new JwtSecurityToken(
-                                expires: DateTime.UtcNow.Add(options.Value.Expires),
-                                claims: claims,
+                                expires: DateTime.UtcNow.Add(options.Value.Expires), // Встановлюємо строк дії токена
+								claims: claims,
                                 signingCredentials: new SigningCredentials(
                                     new SymmetricSecurityKey(
-                                        Encoding.UTF8.GetBytes(options.Value.SecretKey)),
-                                            SecurityAlgorithms.HmacSha256));
+                                        Encoding.UTF8.GetBytes(options.Value.SecretKey)), // Ключ для підпису токена
+											SecurityAlgorithms.HmacSha256));
 
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }

@@ -13,6 +13,7 @@ namespace TaskManagementSystem.Controllers
 		[HttpPost("register")]
 		public IActionResult Register([FromBody] RegisterUserRequest request)
 		{
+			// Перевірка на заповненість полів
 			if (string.IsNullOrWhiteSpace(request.UserName) ||
 				string.IsNullOrWhiteSpace(request.Email) ||
 				string.IsNullOrWhiteSpace(request.Password))
@@ -34,6 +35,7 @@ namespace TaskManagementSystem.Controllers
 		[HttpPost("login")]
 		public IActionResult Login([FromBody] LoginRequest request)
 		{
+			// Перевірка на заповненість полів
 			if (string.IsNullOrWhiteSpace(request.Identifier) ||
 				string.IsNullOrWhiteSpace(request.Password))
 			{
@@ -42,6 +44,7 @@ namespace TaskManagementSystem.Controllers
 
 			try
 			{
+				// Виконати вхід і отримати токен
 				var token = accountService.Login(request.Identifier, request.Password);
 				return Ok(new { token });
 			}
@@ -54,12 +57,14 @@ namespace TaskManagementSystem.Controllers
 		[HttpDelete("{userId}")]
 		public IActionResult DeleteAccount(Guid userId)
 		{
+			// Перевірка наявності токену та правильності id
 			var currentUserId = User.FindFirst("id")?.Value;
 			if (currentUserId == null)
 			{
 				return Unauthorized(new { message = "Token is missing or invalid." });
 			}
 
+			// Перевіряємо чи є доступ до видалення акаунта
 			if (Guid.Parse(currentUserId) != userId)
 			{
 				return Forbid("You are not allowed to delete this account.");
@@ -79,6 +84,7 @@ namespace TaskManagementSystem.Controllers
 		[HttpPut("{userId}")]
 		public IActionResult UpdateAccount(Guid userId, [FromBody] UpdateUserRequest request)
 		{
+			// Перевірка на заповненість полів
 			if (string.IsNullOrWhiteSpace(request.UserName) ||
 				string.IsNullOrWhiteSpace(request.Email) ||
 				string.IsNullOrWhiteSpace(request.Password))
@@ -86,6 +92,7 @@ namespace TaskManagementSystem.Controllers
 				return BadRequest(new { message = "All fields are required." });
 			}
 
+			// Перевірка наявності токену та правильності id
 			var currentUserId = User.FindFirst("id")?.Value;
 			if (currentUserId == null)
 			{
@@ -99,6 +106,7 @@ namespace TaskManagementSystem.Controllers
 
 			try
 			{
+				// Оновлюємо акаунт
 				accountService.UpdateAccount(userId, request.UserName, request.Email, request.Password);
 				return Ok(new { message = "Account updated successfully." });
 			}
