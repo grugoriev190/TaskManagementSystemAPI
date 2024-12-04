@@ -2,11 +2,55 @@
 
 The Task Management API allows you to create, edit, delete, and retrieve tasks. Support filtering by status, due date and priority, as well as sorting results.
 
-## Authorization
+# Setup instructions
+## Step 1: Clone the Repository
+First, clone the repository to your local machine using the following command:
+```
+git clone <repository-url>
+cd TaskManagementSystem
+```
+## Step 2: Configure the Database
+SQL Server Connection String:
 
-An authentication token (Bearer Token) is required to access the API. Pass it in the header of each request:
+Open the appsettings.json file and update the DefaultConnection string with your own SQL Server connection details.
+Example:
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=YourServer;Database=TaskManagement;Trusted_Connection=True;MultipleActiveResultSets=true; TrustServerCertificate=True;"
+}
+```
+Database Migrations: Ensure you have created the necessary migrations to set up the database tables:
 
-## Endpoints for authorization
+Run the following commands to create and apply the migration:
+```
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+## Step 3: Configure Authentication
+Authentication Settings:
+In the appsettings.json file, make sure the AuthSettings section contains a valid SecretKey and Expires values:
+```json
+"AuthSettings": {
+  "SecretKey": "superlong32characterkeyforsecurity!",
+  "Expires": "00:02:00"
+}
+```
+JWT Authentication: <br/>
+The app uses JWT for authentication. Ensure that the AddAuth method in AuthExtensions.cs is correctly configured to use JWT tokens as shown in the code above.
+## Step 4: Install Dependencies
+Install all necessary NuGet packages for your project by running:
+```
+dotnet restore
+```
+## Step 5: Run the Application
+Access the API:
+
+The API will be accessible at https://localhost:5001 (or the appropriate port shown in the terminal).
+You can use tools like Postman or Swagger UI (in development) to interact with the API.
+
+
+
+# Endpoints for authorization
 ### 1. Registration of user
 - **Method**: `POST`
 - **URL**: `/register`
@@ -131,7 +175,7 @@ An authentication token (Bearer Token) is required to access the API. Pass it in
   }
   ```
   
-## Endpoints for tasks
+# Endpoints for tasks
 
 ### 1. Creating a task
 - **Method**: `POST`
